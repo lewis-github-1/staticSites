@@ -1,1 +1,2 @@
-python3 src/main.py "/REPO_NAME/"
+#!/bin/sh
+python3 src/main.py "/staticSites/"

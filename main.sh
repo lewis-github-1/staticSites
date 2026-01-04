@@ -1,3 +1,12 @@
+#!/usr/bin/env bash
+set -e
+
 python3 src/main.py
-cd public && python3 -m http.server 8888 &
-sleep 1 # Give the server a moment to start up
+
+ls -la public
+cd public
+pwd
+
+sleep 1
+python3 -m http.server 8888 --bind 0.0.0.0
+

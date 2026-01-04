@@ -59,9 +59,9 @@ This is the same paragraph on a new line
         block = "> quote\n> more quote"
         self.assertEqual(block_to_block_type(block), BlockType.QUOTE)
         block = "- list\n- items"
-        self.assertEqual(block_to_block_type(block), BlockType.UNORDERED_LIST)
+        self.assertEqual(block_to_block_type(block), BlockType.ULIST)
         block = "1. list\n2. items"
-        self.assertEqual(block_to_block_type(block), BlockType.ORDERED_LIST)
+        self.assertEqual(block_to_block_type(block), BlockType.OLIST)
         block = "paragraph"
         self.assertEqual(block_to_block_type(block), BlockType.PARAGRAPH)
 
@@ -148,7 +148,7 @@ this is paragraph text
             "<div><blockquote>This is a blockquote block</blockquote><p>this is paragraph text</p></div>",
         )
 
-    def test_code(self):
+    def test_codeblock(self):
         md = """
 ```
 This is text that _should_ remain

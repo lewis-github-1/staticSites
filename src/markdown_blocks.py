@@ -6,58 +6,50 @@ from textnode import text_node_to_html_node, TextNode, TextType
 
 
 class BlockType(Enum):
-    PARAGRAPH = 1
-    HEADING = 2
-    CODE = 3
-    QUOTE = 4
-    UNORDERED_LIST = 5
-    ORDERED_LIST = 6
+    PARAGRAPH = "paragraph"
+    HEADING = "heading"
+    CODE = "code"
+    QUOTE = "quote"
+    OLIST = "ordered_list"
+    ULIST = "unordered_list"
+
+
+def markdown_to_blocks(markdown):
+    blocks = markdown.split("\n\n")
+    filtered_blocks = []
+    for block in blocks:
+        if block == "":
+            continue
+        block = block.strip()
+        filtered_blocks.append(block)
+    return filtered_blocks
+
 
 def block_to_block_type(block):
     lines = block.split("\n")
 
     if block.startswith(("# ", "## ", "### ", "#### ", "##### ", "###### ")):
         return BlockType.HEADING
-
     if len(lines) > 1 and lines[0].startswith("```") and lines[-1].startswith("```"):
         return BlockType.CODE
-
     if block.startswith(">"):
         for line in lines:
             if not line.startswith(">"):
-                break
-        else:
-            return BlockType.QUOTE
-
+                return BlockType.PARAGRAPH
+        return BlockType.QUOTE
     if block.startswith("- "):
         for line in lines:
             if not line.startswith("- "):
-                break
-        else:
-            return BlockType.UNORDERED_LIST
-
+                return BlockType.PARAGRAPH
+        return BlockType.ULIST
     if block.startswith("1. "):
-        expected = 1
+        i = 1
         for line in lines:
-            if not line.startswith(f"{expected}. "):
-                break
-            expected += 1
-        else:
-            return BlockType.ORDERED_LIST
-
+            if not line.startswith(f"{i}. "):
+                return BlockType.PARAGRAPH
+            i += 1
+        return BlockType.OLIST
     return BlockType.PARAGRAPH
-
-
-def markdown_to_blocks(markdown):
-    blocks = markdown.split("\n\n")    
-    cleaned_blocks = []
-    for block in blocks:
-        block = block.strip()
-        if block != "":
-            cleaned_blocks.append(block)
-    return cleaned_blocks
-
-
 
 
 def markdown_to_html_node(markdown):
@@ -77,9 +69,9 @@ def block_to_html_node(block):
         return heading_to_html_node(block)
     if block_type == BlockType.CODE:
         return code_to_html_node(block)
-    if block_type == BlockType.ORDERED_LIST:
+    if block_type == BlockType.OLIST:
         return olist_to_html_node(block)
-    if block_type == BlockType.UNORDERED_LIST:
+    if block_type == BlockType.ULIST:
         return ulist_to_html_node(block)
     if block_type == BlockType.QUOTE:
         return quote_to_html_node(block)
@@ -156,7 +148,3 @@ def quote_to_html_node(block):
     content = " ".join(new_lines)
     children = text_to_children(content)
     return ParentNode("blockquote", children)
-
-
-
-
